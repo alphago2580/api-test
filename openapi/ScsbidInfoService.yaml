@@ -1,0 +1,240 @@
+openapi: "3.0.0"
+info:
+  title: "ScsbidInfoService 공공입찰 낙찰통계 API"
+  description: "컴퓨터회사 입찰통계 수집 및 분석을 위한 최소 주요 엔드포인트 명세"
+  version: "1.0.0"
+servers:
+  - url: "http://apis.data.go.kr/1230000/as/ScsbidInfoService"
+security:
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: ServiceKey
+  parameters:
+    inqryDiv:
+      name: inqryDiv
+      in: query
+      description: 조회구분 (1=날짜)
+      required: true
+      schema:
+        type: string
+        example: "1"
+    inqryBgnDt:
+      name: inqryBgnDt
+      in: query
+      description: 조회 시작일시 (YYYYMMDDHHMM)
+      required: true
+      schema:
+        type: string
+        example: "202507010000"
+    inqryEndDt:
+      name: inqryEndDt
+      in: query
+      description: 조회 종료일시 (YYYYMMDDHHMM)
+      required: true
+      schema:
+        type: string
+        example: "202507202359"
+    pageNo:
+      name: pageNo
+      in: query
+      description: 페이지 번호
+      required: true
+      schema:
+        type: integer
+        example: 1
+    numOfRows:
+      name: numOfRows
+      in: query
+      description: 페이지당 건수
+      required: true
+      schema:
+        type: integer
+        example: 20
+    bidNtceNo:
+      name: bidNtceNo
+      in: query
+      description: 공고번호
+      required: true
+      schema:
+        type: string
+        example: "20250712345"
+    bidNtceOrd:
+      name: bidNtceOrd
+      in: query
+      description: 입찰 차수
+      required: true
+      schema:
+        type: string
+        example: "00"
+    bidClsfcNo:
+      name: bidClsfcNo
+      in: query
+      description: 입찰분류번호
+      required: true
+      schema:
+        type: string
+        example: "0"
+    rbidNo:
+      name: rbidNo
+      in: query
+      description: 재입찰번호
+      required: true
+      schema:
+        type: string
+        example: "000"
+    bidNtceNm:
+      name: bidNtceNm
+      in: query
+      description: 입찰공고명 키워드 (부분 일치)
+      required: false
+      schema:
+        type: string
+        example: "노트북"
+    ntceInsttNm:
+      name: ntceInsttNm
+      in: query
+      description: 공고기관명 키워드 (부분 일치)
+      required: false
+      schema:
+        type: string
+        example: "환경부"
+    dminsttNm:
+      name: dminsttNm
+      in: query
+      description: 수요기관명 키워드 (부분 일치)
+      required: false
+      schema:
+        type: string
+        example: "환경부"
+    indstrytyNm:
+      name: indstrytyNm
+      in: query
+      description: 업종명 키워드 (부분 일치)
+      required: false
+      schema:
+        type: string
+        example: "서버"
+    refNo:
+      name: refNo
+      in: query
+      description: 참조번호 키워드 (부분 일치)
+      required: false
+      schema:
+        type: string
+        example: "ABC123"
+paths:
+  /getScsbidListSttusThng:
+    get:
+      summary: "물품 낙찰 현황 조회"
+      description: "지정 기간 내 물품 입찰의 최종낙찰자 정보를 조회합니다."
+      parameters:
+        - $ref: '#/components/parameters/inqryDiv'
+        - $ref: '#/components/parameters/inqryBgnDt'
+        - $ref: '#/components/parameters/inqryEndDt'
+        - $ref: '#/components/parameters/pageNo'
+        - $ref: '#/components/parameters/numOfRows'
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+  /getScsbidListSttusThngPPSSrch:
+    get:
+      summary: "검색조건 기반 물품 낙찰 현황 조회"
+      description: "공고명, 기관명, 업종 등 키워드 필터를 포함해 물품 낙찰 현황을 조회합니다."
+      parameters:
+        - $ref: '#/components/parameters/inqryDiv'
+        - $ref: '#/components/parameters/inqryBgnDt'
+        - $ref: '#/components/parameters/inqryEndDt'
+        - $ref: '#/components/parameters/pageNo'
+        - $ref: '#/components/parameters/numOfRows'
+        - $ref: '#/components/parameters/bidNtceNm'
+        - $ref: '#/components/parameters/ntceInsttNm'
+        - $ref: '#/components/parameters/dminsttNm'
+        - $ref: '#/components/parameters/indstrytyNm'
+        - $ref: '#/components/parameters/refNo'
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+  /getOpengResultListInfoThng:
+    get:
+      summary: "개찰결과 물품 목록 조회"
+      description: "공개 개찰이 완료된 입찰 건의 낙찰 순위 및 업체 정보를 조회합니다."
+      parameters:
+        - $ref: '#/components/parameters/bidNtceNo'
+        - $ref: '#/components/parameters/bidNtceOrd'
+        - $ref: '#/components/parameters/bidClsfcNo'
+        - $ref: '#/components/parameters/rbidNo'
+        - $ref: '#/components/parameters/pageNo'
+        - $ref: '#/components/parameters/numOfRows'
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+  /getOpengResultListInfoThngPreparPcDetail:
+    get:
+      summary: "예비가격 상세 조회"
+      description: "공고별 예비가격 및 예비입찰업체 정보를 상세 조회합니다."
+      parameters:
+        - $ref: '#/components/parameters/bidNtceNo'
+        - $ref: '#/components/parameters/bidNtceOrd'
+        - $ref: '#/components/parameters/bidClsfcNo'
+        - $ref: '#/components/parameters/rbidNo'
+        - $ref: '#/components/parameters/pageNo'
+        - $ref: '#/components/parameters/numOfRows'
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+  /getOpengResultListInfoFailing:
+    get:
+      summary: "유찰 이력 조회"
+      description: "낙찰이 이루어지지 않은 입찰 건의 유찰 이력을 조회합니다."
+      parameters:
+        - $ref: '#/components/parameters/bidNtceNo'
+        - $ref: '#/components/parameters/bidNtceOrd'
+        - $ref: '#/components/parameters/bidClsfcNo'
+        - $ref: '#/components/parameters/rbidNo'
+        - $ref: '#/components/parameters/pageNo'
+        - $ref: '#/components/parameters/numOfRows'
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+  /getOpengResultListInfoRebid:
+    get:
+      summary: "재입찰 이력 조회"
+      description: "유찰 후 재입찰된 입찰 건의 이력을 조회합니다."
+      parameters:
+        - $ref: '#/components/parameters/bidNtceNo'
+        - $ref: '#/components/parameters/bidNtceOrd'
+        - $ref: '#/components/parameters/bidClsfcNo'
+        - $ref: '#/components/parameters/rbidNo'
+        - $ref: '#/components/parameters/pageNo'
+        - $ref: '#/components/parameters/numOfRows'
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
